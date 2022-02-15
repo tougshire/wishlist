@@ -1,0 +1,204 @@
+{% extends './_form.html' %}
+{% load static %}
+{% load perm_checks %}
+{% block content %}
+  <h2>{{ object }}</h2>
+  {{ form.errors }}
+  <form method="POST">
+    <div class="form">
+      {% csrf_token %}
+      {% for field in form.hidden_fields %}
+        {{ field }}
+      {% endfor %}
+
+      <div id="div_item">
+        {% include './_form_field.html' with field=form.item %}
+      </div>
+      <div id="div_location">
+        {% include './_form_field.html' with field=form.location %}
+      </div>
+      <div id="div_short_description">
+        {% include './_form_field.html' with field=form.short_description %}
+      </div>
+      <div id="div_description">
+        {% include './_form_field.html' with field=form.long_description %}
+      </div>
+      <div id="div_urgency">
+        {% include './_form_field.html' with field=form.urgency %}
+      </div>
+      {% if perms.wishlist.change_ticket %}
+        <div id="div_technician">
+          {% include './_form_field.html' with field=form.technician %}
+        </div>
+        <div id="div_is_resolved">
+          {% include './_form_field.html' with field=form.is_resolved %}
+        </div>
+        <div id="div_resolution_notes">
+          {% include './_form_field.html' with field=form.resolution_notes %}
+        </div>
+        <div id="div_recipient_emails">
+          {% include './_form_field.html' with field=form.recipient_emails %}
+        </div>
+        <div id="div_donot_send">
+          {% include './_form_field.html' with field='<input type="checkbox" name="donot_send">' label_tag="Do Not Send Emails" help_text="Do not send emails for this update (does not affect future updates)" %}
+        </div>
+      {% endif %}
+
+      {% include './_form_button.html' with label="Submit Form" button='<button type="submit">Submit</button>' %}
+
+      <h3>Notes</h3>
+
+      {{ ticketnotes.management_form }}
+      {% for ticketnoteform in ticketnotes.forms %}
+        {% if ticketnoteform.id.value > 0 %}
+          <div id="div_ticketnoteform_{{ ticketnoteform.id.value }}" class="ticketnoteformsetform"  >
+            {% for hiddenfield in ticketnoteform.hidden_fields %}
+              {{ hiddenfield }}
+            {% endfor %}
+            {% include './_form_field.html' with field=ticketnoteform.when %}
+            {% include './_form_field.html' with field=ticketnoteform.text %}
+            {% include './_form_field.html' with field=ticketnoteform.DELETE %}
+          </div>
+        {% else %}
+          <div class="ticketnoteformsetform ticketnotenewform" >
+            {% for hiddenfield in ticketnoteform.hidden_fields %}
+              {{ hiddenfield }}
+            {% endfor %}
+            {% include './_form_field.html' with field=ticketnoteform.when %}
+            {% include './_form_field.html' with field=ticketnoteform.text %}
+            {% include './_form_field.html' with field=ticketnoteform.DELETE %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      <table>
+        <tr>
+          <td><button type="button" id="button_addticketnote">Add</button></td><td span="*"></td>
+        </tr>
+        {% for ticketnote in object.ticketnote_set.all %}
+          <tr id="tr_ticketnote_{{ ticketnote.id }}">
+            <td>{{ ticketnote.when }}</td><td>{{ ticketnote.text }}</td><td>{{ ticketnote.is_major }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+      {% include './_form_button.html' with label="Submit Form" button='<button type="submit">Submit</button>' %}
+
+    </div>
+
+  </form>
+
+{% endblock %}
+{% block bottomscript %}
+  {{ block.super }}
+  <script>
+    function setLocation() {
+      var itemField = document.getElementById('{{ form.item.id_for_label }}')
+      var locationField = document.getElementById('{{ form.location.id_for_label }}')
+      var itemSelectedOptions = itemField.selectedOptions
+      if(itemSelectedOptions.length==1) {
+        locationField.value=itemSelectedOptions[0].getAttribute('data-home')
+      }
+    }
+    document.getElementById('{{ form.item.id_for_label }}').addEventListener('change', function() {
+      console.log('change event triggered')
+      setLocation();
+    })
+
+  </script>
+  <script>
+    function displayEditItemLink() {
+      if("{{ perms.wishlist.change_ticket }}"=="True") {
+        var href0="{% url 'libtekin:item-update' 0  %}"
+        var itemSelect = document.getElementById("{{ form.item.id_for_label }}")
+        var aItem = document.getElementById('a_itemEdit')
+        if(typeof(aItem) != 'undefined' && aItem != null){
+          document.getElementById('a_itemEdit').remove()
+        }
+        if( itemSelect.value > 0 ) {
+          var href = href0.replace("0", itemSelect.value)
+          var aItem = document.createElement('a')
+          aItem.id="a_itemEdit"
+          aItem.innerText="Edit Item"
+          aItem.target="_blank"
+          itemSelect.parentNode.insertBefore(aItem, itemSelect.nextSibling )
+          aItem.href=href
+          aItem.addEventListener('click', function(e) {
+            e.preventDefault
+            window.open(href)
+          })
+        }
+      }
+    }
+    document.getElementById("{{ form.item.id_for_label }}").addEventListener("change", function(){
+      displayEditItemLink()
+    });
+    displayEditItemLink()
+  </script>
+  <script>
+    addFilterInput("{{ form.item.id_for_label }}")
+  </script>
+  <script>
+    function addAddNotePopupEvent() {
+      aAddNote = document.getElementById('a_addnote')
+      if(typeof(aAddNote) != 'undefined' && aAddNote != null){
+        document.getElementById('a_addnote').addEventListener('click', function(e) {
+          e.preventDefault()
+          window.open(e.target.href)
+        });
+      }
+    }
+    addAddNotePopupEvent()
+    function refreshDiv(fields, model) {
+      var emptydiv = document.getElementById('div_' + model + '-empty')
+      var newdiv = emptydiv.cloneNode(true)
+      var allTicketnoteDivs = document.getElementsByClassName('relatedticketnote')
+      newdiv.id = 'div_' + model + '-' + allTicketnoteDivs.length
+      keys = Object.keys(fields)
+      console.log('keys:')
+      console.log(keys)
+      for(key of keys){
+        console.log("span[data-field='" + key + "']")
+        console.log(fields[key])
+        newdiv.querySelector("span[data-field='" + key + "']").innerText=fields[key]
+      }
+      newdiv.style.display="block"
+      emptydiv.parentNode.insertBefore(newdiv, emptydiv)
+    }
+  </script>
+  <script>
+    function enableFormsetForm(formid, displayid) {
+      let form = document.getElementById(formid)
+      document.getElementById(formid).style.display="block"
+      document.getElementById(displayid).style.display="none"
+    }
+    let ticketnoteEditButtons = document.getElementsByClassName('ticketnote_edit_button')
+    for( ticketnoteEditButton of ticketnoteEditButtons){
+      ticketnoteEditButton.addEventListener('click', function(e){
+        e.preventDefault()
+        enableFormsetForm(e.target.dataset.formid, e.target.dataset.displayid)
+      })
+    }
+    function enableAddFormsetForm(formclass) {
+      let newforms = document.getElementsByClassName(formclass)
+      if( newforms.length > 0) {
+        let newform = newforms[0]
+        newform.style.display="block"
+        newform.classList.remove(formclass)
+      } else {
+        alert('please save before adding more')
+      }
+    }
+
+    document.getElementById('button_addticketnote').addEventListener('click', function(e){
+      e.preventDefault()
+      enableAddFormsetForm('ticketnotenewform')
+    })
+    let ticketnoteforms = document.getElementsByClassName("ticketnoteformsetform")
+    for( ticketnoteform of ticketnoteforms ){
+      ticketnoteform.style.display="none"
+    }
+
+  </script>
+
+{% endblock %}
+

@@ -1,0 +1,38 @@
+{% load perm_checks %}
+  <h2>{{ object }}</h2>
+
+  <div class="detail">
+    {% include './_detail_field.html' with label=itemrequest_labels.description field=object.description %}
+    {% include './_detail_field.html' with label=itemrequest_labels.purpose field=object.purpose %}
+    {% include './_detail_field.html' with label=itemrequest_labels.notes field=object.notes %}
+    {% include './_detail_field.html' with label=itemrequest_labels.price field=object.price %}
+    {% include './_detail_field.html' with label=itemrequest_labels.substitutability field=object.substitutability %}
+    {% include './_detail_field.html' with label=itemrequest_labels.urgency field=object.urgency %}
+    {% include './_detail_field.html' with label=itemrequest_labels.status field=object.status %}
+    {% include './_detail_field.html' with label=itemrequest_labels.submitted_by field=object.submitted_by %}
+    {% include './_detail_field.html' with label=itemrequest_labels.is_resolved field=object.is_resolved|yesno %}
+  </div>
+
+  <script>
+    document.getElementById('a_addnote').addEventListener('click', function(e) {
+      e.preventDefault()
+      window.open(e.target.href)
+    });
+    function refreshDiv(fields, model) {
+      var emptydiv = document.getElementById('div_' + model + '-empty')
+      var newdiv = emptydiv.cloneNode(true)
+      var allItemrequestnoteDivs = document.getElementsByClassName('relateditemrequestnote')
+      newdiv.id = 'div_' + model + '-' + allItemrequestnoteDivs.length
+      keys = Object.keys(fields)
+      console.log('keys:')
+      console.log(keys)
+      for(key of keys){
+        console.log("span[data-field='" + key + "']")
+        console.log(fields[key])
+        newdiv.querySelector("span[data-field='" + key + "']").innerText=fields[key]
+      }
+      newdiv.style.display="block"
+      emptydiv.parentNode.insertBefore(newdiv, emptydiv)
+    }
+  </script>
+
