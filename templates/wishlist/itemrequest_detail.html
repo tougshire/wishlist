@@ -2,18 +2,12 @@
 {% load perm_checks %}
 {% block content %}
 
-  {% include './ticket_detail_include.html' %}
+  {% include './itemrequest_detail_include.html' %}
 
   <div class="menu-bottom">
-    {% user_is_editor object user as editor %}
-    {% if editor %}
+    {% if perms.wishlist.change_itemrequest %}
       <div class="menu-item">
-        <a href="{% url 'wishlist:ticketticketnote-create' object.pk %}">Add Note</a>
-      </div>
-    {% endif %}
-    {% if perms.wishlist.change_ticket %}
-      <div class="menu-item">
-        <a href="{% url 'wishlist:ticket-update' object.pk %}">Edit</a>
+        <a href="{% url 'wishlist:itemrequest-update' object.pk %}">Edit</a>
       </div>
     {% endif %}
   </div>

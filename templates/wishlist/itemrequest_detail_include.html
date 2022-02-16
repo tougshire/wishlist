@@ -6,11 +6,12 @@
     {% include './_detail_field.html' with label=itemrequest_labels.purpose field=object.purpose %}
     {% include './_detail_field.html' with label=itemrequest_labels.notes field=object.notes %}
     {% include './_detail_field.html' with label=itemrequest_labels.price field=object.price %}
-    {% include './_detail_field.html' with label=itemrequest_labels.substitutability field=object.substitutability %}
-    {% include './_detail_field.html' with label=itemrequest_labels.urgency field=object.urgency %}
-    {% include './_detail_field.html' with label=itemrequest_labels.status field=object.status %}
+    {% include './_detail_field.html' with label=itemrequest_labels.quantity field=object.quantity %}
+    {% include './_detail_field.html' with label=itemrequest_labels.substitutability field=object.get_substitutability_display %}
+    {% include './_detail_field.html' with label=itemrequest_labels.urgency field=object.get_urgency_display %}
+    {% include './_detail_field.html' with label=itemrequest_labels.status field=object.get_status_display %}
     {% include './_detail_field.html' with label=itemrequest_labels.submitted_by field=object.submitted_by %}
-    {% include './_detail_field.html' with label=itemrequest_labels.is_resolved field=object.is_resolved|yesno %}
+    {% include './_detail_field.html' with label=itemrequest_labels.when field=object.when %}
   </div>
 
   <script>

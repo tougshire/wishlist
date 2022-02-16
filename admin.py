@@ -1,27 +1,6 @@
 from django.contrib import admin
-from .models import Ticket, Technician, TicketNote
+from .models import ItemRequest
 
-class TicketAdmin(admin.ModelAdmin):
-    list_display=('short_description', 'when', 'is_resolved')
-    fields=(
-        'item',
-        'location',
-        'short_description',
-        'long_description',
-        'urgency',
-        'submitted_by',
-        'when',
-        'technician',
-        'is_resolved',
-        'resolution_notes',
-        'recipient_emails'
-    )
 
-admin.site.register(Ticket, TicketAdmin)
+admin.site.register(ItemRequest)
 
-class TechnicianAdmin(admin.ModelAdmin):
-    list_display=('name', 'user')
-
-admin.site.register(Technician, TechnicianAdmin)
-
-admin.site.register(TicketNote)

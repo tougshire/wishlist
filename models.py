@@ -37,15 +37,22 @@ class ItemRequest(models.Model):
         help_text='A description of the purpose for which this item is desired',
     )
     notes = models.TextField(
-        'Description',
+        'Notes',
         blank=True,
         help_text='Additional notes if the short description and purpose are inadequate'
     )
     price = MoneyField(
-        'price',
+        'price (ea)',
+        default_currency='USD',
+        max_digits=19,
         blank=True,
         null=True,
         help_text='The estimated cost of the item'
+    )
+    quantity = models.IntegerField(
+        'quantity',
+        default=1,
+        help_text = 'The amount desired'
     )
     link = models.URLField(
         'link',
@@ -66,7 +73,7 @@ class ItemRequest(models.Model):
     )
     status = models.IntegerField(
         'Status',
-        choices=URGENCY_CHOICES,
+        choices=STATUS_CHOICES,
         default=1,
         help_text='The status of the request'
     )
@@ -75,7 +82,12 @@ class ItemRequest(models.Model):
         verbose_name='submitted by',
         null=True,
         on_delete=models.PROTECT,
-        help_text='The user who submitted this ticket'
+        help_text='The user who submitted this request'
+    )
+    when = models.DateField(
+        'submitted when',
+        default = datetime.today,
+        help_text='The date that this request was submitted'
     )
     resolution_notes = models.TextField(
         'resolution notes',
@@ -84,13 +96,13 @@ class ItemRequest(models.Model):
     )
 
     def __str__(self):
-        return self.short_description
+        return self.description
 
     def user_is_editor(self, user):
-        return user == self.submitted_by or user.has_perm('wishlist.change_ticket')
+        return user == self.submitted_by or user.has_perm('wishlist.change_itemrequest')
 
     class Meta:
-        ordering=['is_resolved', '-when', 'urgency']
+        ordering=['status', 'urgency']
 
 
 class History(models.Model):
@@ -130,7 +142,7 @@ class History(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name='libtektiket_history',
+        related_name='wishlist_history',
         null=True,
         help_text='The user who made this change'
     )

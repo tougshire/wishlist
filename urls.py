@@ -4,10 +4,9 @@ from . import views
 app_name = 'wishlist'
 
 urlpatterns = [
-    path('ticket/create/', views.TicketCreate.as_view(), name='ticket-create'),
-    path('ticket/<int:pk>/update/', views.TicketUpdate.as_view(), name='ticket-update'),
-    path('ticket/<int:pk>/detail/', views.TicketDetail.as_view(), name='ticket-detail'),
-    path('ticket/<int:pk>/delete/', views.TicketSoftDelete.as_view(), name='ticket-delete'),
-    path('ticket/list/', views.TicketList.as_view(), name='ticket-list'),
-    path('ticket/<int:ticketpk>/ticketnote/create', views.TicketTicketNoteCreate.as_view(), name='ticketticketnote-create'),
+    path('itemrequest/create/', views.ItemRequestCreate.as_view(), name='itemrequest-create'),
+    path('itemrequest/<int:pk>/update/', views.ItemRequestUpdate.as_view(), name='itemrequest-update'),
+    path('itemrequest/<int:pk>/detail/', views.ItemRequestDetail.as_view(), name='itemrequest-detail'),
+    path('itemrequest/<int:pk>/delete/', views.ItemRequestSoftDelete.as_view(), name='itemrequest-delete'),
+    path('itemrequest/list/', views.ItemRequestList.as_view(), name='itemrequest-list'),
 ]

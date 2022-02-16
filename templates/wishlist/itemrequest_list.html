@@ -176,58 +176,76 @@
   </div>
 
   <div class="list">
-    <div><a href="{% url 'libtekticket:ticket-create' %}">create</a></div>
+    <div><a href="{% url 'wishlist:itemrequest-create' %}">create</a></div>
       <div class="row rowhead">
         {% include './_list_head.html' with field='' %}
-        {% if 'item' in show_columns or not show_columns %}
-          {% include './_list_head.html' with field=ticket_labels.item %}
+        {% if 'description' in show_columns or not show_columns %}
+          {% include './_list_head.html' with field=itemrequest_labels.description %}
         {% endif %}
-        {% if 'location' in show_columns or not show_columns %}
-          {% include './_list_head.html' with field=ticket_labels.location %}
+        {% if 'purpose' in show_columns or not show_columns %}
+          {% include './_list_head.html' with field=itemrequest_labels.purpose %}
         {% endif %}
-        {% if 'short_description' in show_columns or not show_columns %}
-          {% include './_list_head.html' with field=ticket_labels.short_description %}
+        {% if 'notes' in show_columns or not show_columns %}
+          {% include './_list_head.html' with field=itemrequest_labels.notes %}
+        {% endif %}
+        {% if 'price' in show_columns or not show_columns %}
+          {% include './_list_head.html' with field=itemrequest_labels.price %}
+        {% endif %}
+        {% if 'link' in show_columns or not show_columns %}
+          {% include './_list_head.html' with field=itemrequest_labels.link %}
+        {% endif %}
+        {% if 'substitutability' in show_columns or not show_columns %}
+          {% include './_list_head.html' with field=itemrequest_labels.substitutability %}
         {% endif %}
         {% if 'urgency' in show_columns or not show_columns %}
-          {% include './_list_head.html' with field=ticket_labels.urgency %}
+          {% include './_list_head.html' with field=itemrequest_labels.urgency %}
+        {% endif %}
+        {% if 'status' in show_columns or not show_columns %}
+          {% include './_list_head.html' with field=itemrequest_labels.status %}
         {% endif %}
         {% if 'submitted_by' in show_columns or not show_columns %}
-          {% include './_list_head.html' with field=ticket_labels.submitted_by %}
+          {% include './_list_head.html' with field=itemrequest_labels.submitted_by %}
         {% endif %}
         {% if 'when' in show_columns or not show_columns %}
-          {% include './_list_head.html' with field=ticket_labels.when %}
+          {% include './_list_head.html' with field=itemrequest_labels.when %}
         {% endif %}
-        {% if 'is_resolved' in show_columns or not show_columns %}
-          {% include './_list_head.html' with field=ticket_labels.is_resolved %}
-        {% endif %}
+
       </div>
 
       {% for item in object_list %}
         <div class="row">
-          <div class="listfield"><a href="{% url 'libtekticket:ticket-detail' item.pk %}">view</a></div>
-          {% if 'item' in show_columns or not show_columns %}
-            {% include './_list_field.html' with field=item.item %}
+          <div class="listfield"><a href="{% url 'wishlist:itemrequest-detail' item.pk %}">view</a></div>
+          {% if 'description' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.description %}
           {% endif %}
-          {% if 'location' in show_columns or not show_columns %}
-            {% include './_list_field.html' with field=item.location %}
+          {% if 'purpose' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.purpose %}
           {% endif %}
-          {% if 'short_description' in show_columns or not show_columns %}
-            {% include './_list_field.html' with field=item.short_description %}
+          {% if 'notes' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.notes %}
+          {% endif %}
+          {% if 'price' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.price %}
+          {% endif %}
+          {% if 'link' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.link %}
+          {% endif %}
+          {% if 'substitutability' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.get_substitutability_display %}
           {% endif %}
           {% if 'urgency' in show_columns or not show_columns %}
-            {% include './_list_field.html' with field=item.urgency %}
+            {% include './_list_field.html' with field=item.get_urgency_display %}
+          {% endif %}
+          {% if 'status' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.get_status_display %}
           {% endif %}
           {% if 'submitted_by' in show_columns or not show_columns %}
             {% include './_list_field.html' with field=item.submitted_by %}
           {% endif %}
-          {% with when_formatted=item.when|date:'Y-m-d'  %}
-            {% if 'when' in show_columns or not show_columns %}
-              {% include './_list_field.html' with field=when_formatted %}
-            {% endif %}
-          {% endwith %}
-          {% if 'is_resolved' in show_columns or not show_columns %}
-            {% include './_list_field.html' with field=item.is_resolved|yesno %}
+          {% if 'when' in show_columns or not show_columns %}
+            {% include './_list_field.html' with field=item.when %}
           {% endif %}
+
         </div>
       {% endfor %}
 
